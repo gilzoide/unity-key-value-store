@@ -1,0 +1,11 @@
+{
+  "name": "com.gilzoide.key-value-store",
+  "displayName": "Key-Value Store",
+  "version": "1.0.0",
+  "description": "Key-Value Store save system interface and implementations",
+  "homepage": "https://github.com/gilzoide/unity-key-value-store",
+  "license": "Unlicense",
+  "author": {
+    "name": "Gil Barbosa Reis"
+  }
+}
