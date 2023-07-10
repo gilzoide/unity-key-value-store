@@ -55,5 +55,80 @@ namespace Gilzoide.KeyValueStore
         {
             return kvs.TryGetBytes(key, out byte[] value) ? value : defaultValue;
         }
+
+        public static bool TryGetObject<T>(this IKeyValueStore kvs, string key, out T value)
+        {
+            switch (KeyValueStoreDefaults.DefaultObjectSerializer)
+            {
+                case ITextSerializer textSerializer:
+                    return kvs.TryGetObject<T>(textSerializer, key, out value);
+                case IBinarySerializer binarySerializer:
+                    return kvs.TryGetObject<T>(binarySerializer, key, out value);
+                default:
+                    throw new InvalidCastException("Expected default object serializer to be either ITextSerializer or IBinarySerializer type.");
+            }
+        }
+        public static T GetObject<T>(this IKeyValueStore kvs, string key, T defaultValue = default)
+        {
+            return kvs.TryGetObject<T>(key, out T value) ? value : defaultValue;
+        }
+        public static void SetObject<T>(this IKeyValueStore kvs, string key, T obj)
+        {
+            switch (KeyValueStoreDefaults.DefaultObjectSerializer)
+            {
+                case ITextSerializer textSerializer:
+                    kvs.SetObject(textSerializer, key, obj);
+                    break;
+                case IBinarySerializer binarySerializer:
+                    kvs.SetObject(binarySerializer, key, obj);
+                    break;
+                default:
+                    throw new InvalidCastException("Expected default object serializer to be either ITextSerializer or IBinarySerializer type.");
+            }
+        }
+
+        public static bool TryGetObject<T>(this IKeyValueStore kvs, ITextSerializer serializer, string key, out T value)
+        {
+            if (kvs.TryGetString(key, out string s))
+            {
+                value = serializer.DeserializeObject<T>(s);
+                return true;
+            }
+            else
+            {
+                value = default;
+                return false;
+            }
+        }
+        public static T GetObject<T>(this IKeyValueStore kvs, ITextSerializer serializer, string key, T defaultValue = default)
+        {
+            return kvs.TryGetObject<T>(serializer, key, out T value) ? value : defaultValue;
+        }
+        public static void SetObject<T>(this IKeyValueStore kvs, ITextSerializer serializer, string key, T obj)
+        {
+            kvs.SetString(key, serializer.SerializeObject(obj));
+        }
+
+        public static bool TryGetObject<T>(this IKeyValueStore kvs, IBinarySerializer serializer, string key, out T value)
+        {
+            if (kvs.TryGetBytes(key, out byte[] b))
+            {
+                value = serializer.DeserializeObject<T>(b);
+                return true;
+            }
+            else
+            {
+                value = default;
+                return false;
+            }
+        }
+        public static T GetObject<T>(this IKeyValueStore kvs, IBinarySerializer serializer, string key, T defaultValue = default)
+        {
+            return kvs.TryGetObject<T>(serializer, key, out T value) ? value : defaultValue;
+        }
+        public static void SetObject<T>(this IKeyValueStore kvs, IBinarySerializer serializer, string key, T obj)
+        {
+            kvs.SetBytes(key, serializer.SerializeObject(obj));
+        }
     }
 }
