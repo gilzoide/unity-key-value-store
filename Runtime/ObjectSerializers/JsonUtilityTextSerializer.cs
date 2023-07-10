@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Gilzoide.KeyValueStore.Serializers
+namespace Gilzoide.KeyValueStore.ObjectSerializers
 {
     public class JsonUtilityTextSerializer : ITextSerializer
     {

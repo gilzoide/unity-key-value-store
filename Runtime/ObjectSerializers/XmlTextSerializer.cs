@@ -1,7 +1,7 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace Gilzoide.KeyValueStore.Serializers
+namespace Gilzoide.KeyValueStore.ObjectSerializers
 {
     public class XmlTextSerializer : ITextSerializer
     {

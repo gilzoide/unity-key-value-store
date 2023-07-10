@@ -1,4 +1,4 @@
-namespace Gilzoide.KeyValueStore.Serializers
+namespace Gilzoide.KeyValueStore.ObjectSerializers
 {
     public interface ITextSerializer : ISerializer
     {

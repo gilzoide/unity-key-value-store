@@ -1,4 +1,4 @@
-using Gilzoide.KeyValueStore.Serializers;
+using Gilzoide.KeyValueStore.ObjectSerializers;
 
 namespace Gilzoide.KeyValueStore
 {

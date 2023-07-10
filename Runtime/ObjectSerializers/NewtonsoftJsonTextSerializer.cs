@@ -1,7 +1,7 @@
 #if HAVE_NEWTONSOFT_JSON
 using Newtonsoft.Json;
 
-namespace Gilzoide.KeyValueStore.Serializers
+namespace Gilzoide.KeyValueStore.ObjectSerializers
 {
     public class NewtonsoftJsonTextSerializer : ITextSerializer
     {
