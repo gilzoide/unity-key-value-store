@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Gilzoide.KeyValueStore
 {
-    public class PlayerPrefsKeyValueStore : IKeyValueStore
+    public class PlayerPrefsKeyValueStore : ISavableKeyValueStore
     {
         public void Save()
         {

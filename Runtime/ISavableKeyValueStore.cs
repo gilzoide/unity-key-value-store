@@ -5,5 +5,5 @@ namespace Gilzoide.KeyValueStore
         void Save();
     }
 
-    public interface ISavableKeyValueStore : ISavable, IKeyValueStore {}
+    public interface ISavableKeyValueStore : IKeyValueStore, ISavable {}
 }

@@ -1,54 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace Gilzoide.KeyValueStore
 {
-    public class DictionaryKeyValueStore : ISavableKeyValueStore, IFileKeyValueStore
+    public partial class DictionaryKeyValueStore : IKeyValueStore
     {
-        public string FileName { get; set; }
-        public string Extension => "json";
-
         public DictionaryKeyValueStore() {}
-        public DictionaryKeyValueStore(string fileName)
-        {
-            FileName = fileName;
-        }
 
         private Dictionary<string, object> dictionary = new Dictionary<string, object>();
-
-        public void Load()
-        {
-#if HAVE_NEWTONSOFT_JSON
-            if (string.IsNullOrEmpty(FileName) || !File.Exists(this.GetPersistentPath()))
-            {
-                return;
-            }
-
-            using (var textReader = File.OpenText(this.GetPersistentPath()))
-            {
-                dictionary.Clear();
-                new Newtonsoft.Json.JsonSerializer().Populate(textReader, dictionary);
-            }
-#endif
-        }
-
-        public void Save()
-        {
-#if HAVE_NEWTONSOFT_JSON
-            if (string.IsNullOrEmpty(FileName))
-            {
-                return;
-            }
-
-            this.EnsureDirectoryExists();
-            using (var textWriter = File.CreateText(this.GetPersistentPath()))
-            {
-                new Newtonsoft.Json.JsonSerializer().Serialize(textWriter, dictionary);
-            }
-#endif
-        }
 
         public bool HasKey(string key)
         {
