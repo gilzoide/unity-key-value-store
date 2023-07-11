@@ -4,6 +4,8 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
 {
     public class JsonUtilityTextSerializer : ITextSerializer
     {
+        public bool PrettyPrint { get; set; }
+
         public T DeserializeObject<T>(string text)
         {
             return JsonUtility.FromJson<T>(text);
@@ -11,7 +13,7 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
 
         public string SerializeObject<T>(T obj)
         {
-            return JsonUtility.ToJson(obj);
+            return JsonUtility.ToJson(obj, PrettyPrint);
         }
     }
 }
