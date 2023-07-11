@@ -1,6 +1,6 @@
 namespace Gilzoide.KeyValueStore.ObjectSerializers
 {
-    public interface ISerializer
+    public interface IObjectSerializer
     {
     }
 }
