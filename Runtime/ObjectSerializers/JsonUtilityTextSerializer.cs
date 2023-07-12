@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Gilzoide.KeyValueStore.ObjectSerializers
@@ -6,9 +7,18 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
     {
         public bool PrettyPrint { get; set; }
 
-        public T DeserializeObject<T>(string text)
+        public bool TryDeserializeObject<T>(string text, out T value)
         {
-            return JsonUtility.FromJson<T>(text);
+            try
+            {
+                value = JsonUtility.FromJson<T>(text);
+                return true;
+            }
+            catch (Exception)
+            {
+                value = default;
+                return false;
+            }
         }
 
         public string SerializeObject<T>(T obj)

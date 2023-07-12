@@ -3,12 +3,12 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
     public interface ITextSerializer : IObjectSerializer
     {
         string SerializeObject<T>(T obj);
-        T DeserializeObject<T>(string text);
+        bool TryDeserializeObject<T>(string text, out T value);
     }
 
     public interface ITextSerializer<T> : IObjectSerializer
     {
         string SerializeObject(T obj);
-        T DeserializeObject(string text);
+        bool TryDeserializeObject(string text, out T value);
     }
 }

@@ -48,16 +48,9 @@ namespace Gilzoide.KeyValueStore
 
         public static bool TryGetObject<T>(this IKeyValueStore kvs, ITextSerializer serializer, string key, out T value)
         {
-            if (kvs.TryGetString(key, out string s))
-            {
-                value = serializer.DeserializeObject<T>(s);
-                return true;
-            }
-            else
-            {
-                value = default;
-                return false;
-            }
+            value = default;
+            return kvs.TryGetString(key, out string s)
+                && serializer.TryDeserializeObject<T>(s, out value);
         }
         public static T GetObject<T>(this IKeyValueStore kvs, ITextSerializer serializer, string key, T defaultValue = default)
         {
@@ -70,16 +63,9 @@ namespace Gilzoide.KeyValueStore
 
         public static bool TryGetObject<T>(this IKeyValueStore kvs, ITextSerializer<T> serializer, string key, out T value)
         {
-            if (kvs.TryGetString(key, out string s))
-            {
-                value = serializer.DeserializeObject(s);
-                return true;
-            }
-            else
-            {
-                value = default;
-                return false;
-            }
+            value = default;
+            return kvs.TryGetString(key, out string s)
+                && serializer.TryDeserializeObject(s, out value);
         }
         public static T GetObject<T>(this IKeyValueStore kvs, ITextSerializer<T> serializer, string key, T defaultValue = default)
         {
@@ -92,16 +78,9 @@ namespace Gilzoide.KeyValueStore
 
         public static bool TryGetObject<T>(this IKeyValueStore kvs, IBinarySerializer serializer, string key, out T value)
         {
-            if (kvs.TryGetBytes(key, out byte[] b))
-            {
-                value = serializer.DeserializeObject<T>(b);
-                return true;
-            }
-            else
-            {
-                value = default;
-                return false;
-            }
+            value = default;
+            return kvs.TryGetBytes(key, out byte[] b)
+                && serializer.TryDeserializeObject<T>(b, out value);
         }
         public static T GetObject<T>(this IKeyValueStore kvs, IBinarySerializer serializer, string key, T defaultValue = default)
         {
@@ -114,16 +93,9 @@ namespace Gilzoide.KeyValueStore
 
         public static bool TryGetObject<T>(this IKeyValueStore kvs, IBinarySerializer<T> serializer, string key, out T value)
         {
-            if (kvs.TryGetBytes(key, out byte[] b))
-            {
-                value = serializer.DeserializeObject(b);
-                return true;
-            }
-            else
-            {
-                value = default;
-                return false;
-            }
+            value = default;
+            return kvs.TryGetBytes(key, out byte[] b)
+                && serializer.TryDeserializeObject(b, out value);
         }
         public static T GetObject<T>(this IKeyValueStore kvs, IBinarySerializer<T> serializer, string key, T defaultValue = default)
         {
