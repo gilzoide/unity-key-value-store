@@ -2,6 +2,7 @@ namespace Gilzoide.KeyValueStore
 {
     public interface ISavable
     {
+        void Load();
         void Save();
     }
 

@@ -27,10 +27,15 @@ namespace Gilzoide.KeyValueStore
                     return;
                 }
 
-                using (var streamReader = new StreamReader(fileStream))
-                {
-                    dictionary = (Dictionary<string, object>) new JsonSerializer().Deserialize(streamReader, typeof(Dictionary<string, object>));
-                }
+                Load(fileStream);
+            }
+        }
+
+        public void Load(Stream stream)
+        {
+            using (var streamReader = new StreamReader(stream))
+            {
+                dictionary = (Dictionary<string, object>) new JsonSerializer().Deserialize(streamReader, typeof(Dictionary<string, object>));
             }
         }
 
@@ -43,10 +48,15 @@ namespace Gilzoide.KeyValueStore
                     return;
                 }
 
-                using (var streamWriter = new StreamWriter(fileStream))
-                {
-                    new JsonSerializer().Serialize(streamWriter, dictionary);
-                }
+                Save(fileStream);
+            }
+        }
+
+        public void Save(Stream stream)
+        {
+            using (var streamWriter = new StreamWriter(stream))
+            {
+                new JsonSerializer().Serialize(streamWriter, dictionary);
             }
         }
     }

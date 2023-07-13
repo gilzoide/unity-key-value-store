@@ -5,6 +5,10 @@ namespace Gilzoide.KeyValueStore
 {
     public class PlayerPrefsKeyValueStore : ISavableKeyValueStore
     {
+        public void Load()
+        {
+        }
+
         public void Save()
         {
             PlayerPrefs.Save();

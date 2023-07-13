@@ -106,6 +106,11 @@ namespace Gilzoide.KeyValueStore
             Save();
         }
 
+        public void Load()
+        {
+            WrappedKeyValueStore.Load();
+        }
+
         public async void Save()
         {
             if (isSaveScheduled)
