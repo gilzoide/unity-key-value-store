@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using UnityEngine;
 
 namespace Gilzoide.KeyValueStore
@@ -54,7 +55,8 @@ namespace Gilzoide.KeyValueStore
 
         public bool TryGetLong(string key, out long value)
         {
-            if (TryGetString(key, out string longAsString) && long.TryParse(longAsString, out value))
+            if (TryGetString(key, out string longAsString)
+                && long.TryParse(longAsString, NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
             {
                 return true;
             }
@@ -81,7 +83,8 @@ namespace Gilzoide.KeyValueStore
 
         public bool TryGetDouble(string key, out double value)
         {
-            if (TryGetString(key, out string longAsString) && double.TryParse(longAsString, out value))
+            if (TryGetString(key, out string longAsString)
+                && double.TryParse(longAsString, NumberStyles.Float, CultureInfo.InvariantCulture, out value))
             {
                 return true;
             }
@@ -132,7 +135,7 @@ namespace Gilzoide.KeyValueStore
 
         public void SetLong(string key, long value)
         {
-            PlayerPrefs.SetString(key, value.ToString());
+            PlayerPrefs.SetString(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         public void SetFloat(string key, float value)
@@ -142,7 +145,7 @@ namespace Gilzoide.KeyValueStore
 
         public void SetDouble(string key, double value)
         {
-            PlayerPrefs.SetString(key, value.ToString());
+            PlayerPrefs.SetString(key, value.ToString(CultureInfo.InvariantCulture));
         }
 
         public void SetString(string key, string value)
