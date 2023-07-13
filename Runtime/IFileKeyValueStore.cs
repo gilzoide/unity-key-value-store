@@ -1,36 +1,27 @@
 using System.IO;
-using UnityEngine;
 
 namespace Gilzoide.KeyValueStore
 {
-    public interface IFilenameProvider
+    public interface IFilePathProvider
     {
-        string FileName { get; }
+        string FilePath { get; }
     }
 
-    public interface IFileKeyValueStore : IKeyValueStore, IFilenameProvider {}
+    public interface IFileKeyValueStore : IKeyValueStore, IFilePathProvider {}
 
-    public static class IFilenameProviderExtensions
+    public static class IFilePathProviderProviderExtensions
     {
-        public static string GetPersistentPath(this IFilenameProvider filenameProvider)
+        public static FileStream OpenFileReadStream(this IFilePathProvider filenameProvider)
         {
-            string filename = filenameProvider.FileName;
-            return string.IsNullOrEmpty(filename) || Path.IsPathRooted(filename)
-                ? filename
-                : $"{Application.persistentDataPath}/{filename}";
-        }
-
-        public static FileStream OpenFileReadStream(this IFilenameProvider filenameProvider)
-        {
-            string filePath = filenameProvider.GetPersistentPath();
+            string filePath = filenameProvider.FilePath;
             return string.IsNullOrEmpty(filePath) || !File.Exists(filePath)
                 ? null
                 : File.OpenRead(filePath);
         }
 
-        public static FileStream OpenFileWriteStream(this IFilenameProvider filenameProvider, FileMode fileMode = FileMode.Create)
+        public static FileStream OpenFileWriteStream(this IFilePathProvider filenameProvider, FileMode fileMode = FileMode.Create)
         {
-            string filePath = filenameProvider.GetPersistentPath();
+            string filePath = filenameProvider.FilePath;
             if (string.IsNullOrEmpty(filePath))
             {
                 return null;

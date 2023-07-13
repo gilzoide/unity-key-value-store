@@ -7,15 +7,11 @@ namespace Gilzoide.KeyValueStore
 {
     public partial class DictionaryKeyValueStore : ISavableKeyValueStore, IFileKeyValueStore
     {
-        public string FileName { get; set; }
+        public string FilePath { get; set; }
 
-        public DictionaryKeyValueStore(string fileName, bool loadData = true)
+        public DictionaryKeyValueStore(string filePath)
         {
-            FileName = fileName;
-            if (loadData && !string.IsNullOrEmpty(fileName))
-            {
-                Load();
-            }
+            FilePath = filePath;
         }
 
         public void Load()
