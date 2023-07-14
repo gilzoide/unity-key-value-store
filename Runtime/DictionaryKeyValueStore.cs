@@ -7,7 +7,7 @@ namespace Gilzoide.KeyValueStore
     {
         public DictionaryKeyValueStore() {}
 
-        private Dictionary<string, object> dictionary = new Dictionary<string, object>();
+        protected Dictionary<string, object> dictionary = new Dictionary<string, object>();
 
         public bool HasKey(string key)
         {
@@ -17,6 +17,11 @@ namespace Gilzoide.KeyValueStore
         public void DeleteKey(string key)
         {
             dictionary.Remove(key);
+        }
+
+        public void DeleteAll()
+        {
+            dictionary.Clear();
         }
 
         public bool TryGetBool(string key, out bool value)

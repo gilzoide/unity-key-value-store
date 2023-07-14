@@ -26,6 +26,11 @@ namespace Gilzoide.KeyValueStore
             WrappedKeyValueStore.DeleteKey(key);
         }
 
+        public virtual void DeleteAll()
+        {
+            WrappedKeyValueStore.DeleteAll();
+        }
+
         public virtual bool TryGetBool(string key, out bool value)
         {
             return WrappedKeyValueStore.TryGetBool(key, out value);

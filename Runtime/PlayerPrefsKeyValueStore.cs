@@ -25,6 +25,11 @@ namespace Gilzoide.KeyValueStore
             PlayerPrefs.DeleteKey(key);
         }
 
+        public void DeleteAll()
+        {
+            PlayerPrefs.DeleteAll();
+        }
+
         public bool TryGetBool(string key, out bool value)
         {
             if (HasKey(key))

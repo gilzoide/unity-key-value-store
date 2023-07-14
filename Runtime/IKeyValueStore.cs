@@ -4,6 +4,7 @@ namespace Gilzoide.KeyValueStore
     {
         bool HasKey(string key);
         void DeleteKey(string key);
+        void DeleteAll();
 
         bool TryGetBool(string key, out bool value);
         bool TryGetInt(string key, out int value);
