@@ -1,6 +1,6 @@
 using System;
 
-namespace Gilzoide.KeyValueStore
+namespace Gilzoide.KeyValueStore.Utils
 {
     public abstract class AKeyValueStoreWrapper<TKVS> : IKeyValueStore
         where TKVS : IKeyValueStore

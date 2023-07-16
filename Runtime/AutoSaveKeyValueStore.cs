@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Gilzoide.KeyValueStore.Utils;
 
 namespace Gilzoide.KeyValueStore
 {
