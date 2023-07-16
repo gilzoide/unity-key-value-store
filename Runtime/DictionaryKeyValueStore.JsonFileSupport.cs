@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Gilzoide.KeyValueStore
 {
-    public partial class DictionaryKeyValueStore : ISavableKeyValueStore, IFileKeyValueStore
+    public partial class DictionaryKeyValueStore : IFileKeyValueStore, ISavableKeyValueStore, IStreamSavableKeyValueStore
     {
         public string FilePath { get; set; }
 
