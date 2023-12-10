@@ -8,11 +8,13 @@ namespace Gilzoide.KeyValueStore
 {
     public partial class DictionaryKeyValueStore : AStreamSavableFile, ISavableKeyValueStore, IStreamSavableKeyValueStore, IFileKeyValueStore
     {
+        public readonly JsonSerializer JsonSerializer = JsonSerializer.CreateDefault();
+
         public override void Load(Stream stream)
         {
             using (var streamReader = new StreamReader(stream))
             {
-                dictionary = (Dictionary<string, object>) new JsonSerializer().Deserialize(streamReader, typeof(Dictionary<string, object>));
+                dictionary = (Dictionary<string, object>) JsonSerializer.Deserialize(streamReader, typeof(Dictionary<string, object>));
             }
         }
 
@@ -20,7 +22,7 @@ namespace Gilzoide.KeyValueStore
         {
             using (var streamWriter = new StreamWriter(stream))
             {
-                new JsonSerializer().Serialize(streamWriter, dictionary);
+                JsonSerializer.Serialize(streamWriter, dictionary);
             }
         }
     }
