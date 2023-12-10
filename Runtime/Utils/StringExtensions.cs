@@ -6,7 +6,7 @@ namespace Gilzoide.KeyValueStore.Utils
 {
     public static class StringExtensions
     {
-#if NETSTANDARD2_1
+#if UNITY_2021_2_OR_NEWER
         public static IEnumerable<ReadOnlyMemory<char>> SplitEnumerate(this string text, char separator)
         {
             int startIndex = 0;
@@ -44,7 +44,7 @@ namespace Gilzoide.KeyValueStore.Utils
         {
             foreach (var substring in text.SplitEnumerate(separator))
             {
-#if NETSTANDARD2_1
+#if UNITY_2021_2_OR_NEWER
                 ReadOnlySpan<char> arg = substring.Span;
 #else
                 string arg = substring;
@@ -64,7 +64,7 @@ namespace Gilzoide.KeyValueStore.Utils
         {
             foreach (var substring in text.SplitEnumerate(separator))
             {
-#if NETSTANDARD2_1
+#if UNITY_2021_2_OR_NEWER
                 ReadOnlySpan<char> arg = substring.Span;
 #else
                 string arg = substring;
