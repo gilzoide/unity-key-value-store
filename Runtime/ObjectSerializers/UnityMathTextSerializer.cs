@@ -1,5 +1,4 @@
 #if UNITY_2018_1_OR_NEWER
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -24,7 +23,6 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
 
         public void RegisterInSerializerMap(ObjectSerializerMap serializerMap)
         {
-            IDictionary<Type, IObjectSerializer> dict = serializerMap.TypeToSerializerMap;
             serializerMap.SetObjectSerializer<Color>(this);
             serializerMap.SetObjectSerializer<Quaternion>(this);
             serializerMap.SetObjectSerializer<Matrix4x4>(this);
@@ -167,7 +165,7 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
         unsafe private static string SerializeInts<T>(T value) where T : struct
         {
             int intCount = UnsafeUtility.SizeOf<T>() / UnsafeUtility.SizeOf<int>();
-            var ptr = UnsafeUtility.AddressOf(ref value);
+            void* ptr = UnsafeUtility.AddressOf(ref value);
 
             var stringBuilder = new StringBuilder();
             stringBuilder.Append(UnsafeUtility.ReadArrayElement<int>(ptr, 0).ToString(CultureInfo.InvariantCulture));
@@ -183,7 +181,7 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
         unsafe private static bool TryDeserializeInts<T>(string text, out T value) where T : struct
         {
             value = default;
-            var ptr = UnsafeUtility.AddressOf(ref value);
+            void* ptr = UnsafeUtility.AddressOf(ref value);
             int intCount = UnsafeUtility.SizeOf<T>() / UnsafeUtility.SizeOf<int>();
 
             using (IEnumerator<int> enumerator = text.EnumerateInts(NumberSeparator).GetEnumerator())
@@ -201,7 +199,7 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
         unsafe private static string SerializeFloats<T>(T value) where T : struct
         {
             int floatCount = UnsafeUtility.SizeOf<T>() / UnsafeUtility.SizeOf<float>();
-            var ptr = UnsafeUtility.AddressOf(ref value);
+            void* ptr = UnsafeUtility.AddressOf(ref value);
 
             var stringBuilder = new StringBuilder();
             stringBuilder.Append(UnsafeUtility.ReadArrayElement<float>(ptr, 0).ToString(CultureInfo.InvariantCulture));
@@ -217,7 +215,7 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
         unsafe private static bool TryDeserializeFloats<T>(string text, out T value) where T : struct
         {
             value = default;
-            var ptr = UnsafeUtility.AddressOf(ref value);
+            void* ptr = UnsafeUtility.AddressOf(ref value);
             int floatCount = UnsafeUtility.SizeOf<T>() / UnsafeUtility.SizeOf<float>();
 
             using (IEnumerator<float> enumerator = text.EnumerateFloats(NumberSeparator).GetEnumerator())

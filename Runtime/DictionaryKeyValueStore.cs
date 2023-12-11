@@ -5,8 +5,6 @@ namespace Gilzoide.KeyValueStore
 {
     public partial class DictionaryKeyValueStore : IKeyValueStore
     {
-        public DictionaryKeyValueStore() {}
-
         protected Dictionary<string, object> dictionary = new Dictionary<string, object>();
 
         public bool HasKey(string key)

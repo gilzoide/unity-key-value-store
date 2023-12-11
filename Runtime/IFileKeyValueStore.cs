@@ -14,9 +14,14 @@ namespace Gilzoide.KeyValueStore
         public static FileStream OpenFileReadStream(this IFilePathProvider filenameProvider)
         {
             string filePath = filenameProvider.FilePath;
-            return string.IsNullOrEmpty(filePath) || !File.Exists(filePath)
-                ? null
-                : File.OpenRead(filePath);
+            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
+            {
+                return null;
+            }
+            else
+            {
+                return File.OpenRead(filePath);
+            }
         }
 
         public static FileStream OpenFileWriteStream(this IFilePathProvider filenameProvider, FileMode fileMode = FileMode.Create)

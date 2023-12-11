@@ -88,8 +88,8 @@ namespace Gilzoide.KeyValueStore
 
         public bool TryGetDouble(string key, out double value)
         {
-            if (TryGetString(key, out string longAsString)
-                && double.TryParse(longAsString, NumberStyles.Float, CultureInfo.InvariantCulture, out value))
+            if (TryGetString(key, out string doubleAsString)
+                && double.TryParse(doubleAsString, NumberStyles.Float, CultureInfo.InvariantCulture, out value))
             {
                 return true;
             }
