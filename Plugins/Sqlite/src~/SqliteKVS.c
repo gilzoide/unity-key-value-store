@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdint.h>
 
 #ifdef EMBED_SQLITE
 #include "sqlite3.h"
@@ -14,6 +15,8 @@ const char sqlite3_version[] = SQLITE_VERSION;
 #define SQL_UPSERT "INSERT INTO KeyValueStore(key, value) VALUES(?1, ?2) ON CONFLICT(key) DO UPDATE SET value = ?2"
 #define SQL_DELETE_KEY "DELETE FROM KeyValueStore WHERE key = ?1"
 #define SQL_DELETE_ALL "DELETE FROM KeyValueStore"
+#define SQL_BEGIN "BEGIN"
+#define SQL_COMMIT "COMMIT"
 
 // SQL statement binding indices
 #define SELECT_KEY_INDEX 1
@@ -27,6 +30,10 @@ typedef struct {
 	sqlite3_stmt *stmt_upsert;
 	sqlite3_stmt *stmt_delete_key;
 	sqlite3_stmt *stmt_delete_all;
+	sqlite3_stmt *stmt_begin;
+	sqlite3_stmt *stmt_commit;
+	uint8_t is_in_transaction;
+	uint8_t is_pending_commit;
 } KVS;
 
 // MARK: Helper functions
@@ -89,6 +96,30 @@ static void SqliteKVS_prepare_delete_all(KVS *kvs) {
 }
 static void SqliteKVS_reset_delete_all(KVS *kvs) {
 	sqlite3_reset(kvs->stmt_delete_all);
+}
+
+static void SqliteKVS_prepare_begin(KVS *kvs) {
+	if (kvs->stmt_begin == NULL) {
+		sqlite3_prepare(kvs->db, SQL_BEGIN, sizeof(SQL_BEGIN), &kvs->stmt_begin, NULL);
+	}
+	else {
+		sqlite3_reset(kvs->stmt_begin);
+	}
+}
+static void SqliteKVS_reset_begin(KVS *kvs) {
+	sqlite3_reset(kvs->stmt_begin);
+}
+
+static void SqliteKVS_prepare_commit(KVS *kvs) {
+	if (kvs->stmt_commit == NULL) {
+		sqlite3_prepare(kvs->db, SQL_COMMIT, sizeof(SQL_COMMIT), &kvs->stmt_commit, NULL);
+	}
+	else {
+		sqlite3_reset(kvs->stmt_commit);
+	}
+}
+static void SqliteKVS_reset_commit(KVS *kvs) {
+	sqlite3_reset(kvs->stmt_commit);
 }
 
 // MARK: Open/Close
@@ -233,4 +264,19 @@ int SqliteKVS_delete_all(KVS *kvs) {
 // MARK: Reset statement, to be called by C# after getting text/blob data
 void SqliteKVS_reset_select(KVS *kvs) {
 	sqlite3_reset(kvs->stmt_select);
+}
+
+// MARK: Transaction support
+int SqliteKVS_begin(KVS *kvs) {
+	SqliteKVS_prepare_begin(kvs);
+	int result = sqlite3_step(kvs->stmt_begin);
+	SqliteKVS_reset_begin(kvs);
+	return result;
+}
+
+int SqliteKVS_commit(KVS *kvs) {
+	SqliteKVS_prepare_commit(kvs);
+	int result = sqlite3_step(kvs->stmt_commit);
+	SqliteKVS_reset_commit(kvs);
+	return result;
 }

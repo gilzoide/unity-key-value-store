@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace Gilzoide.KeyValueStore
 {
@@ -54,6 +55,12 @@ namespace Gilzoide.KeyValueStore
         private static extern int SqliteKVS_delete_all([In, Out] SqliteKeyValueStore kvs);
 
         [DllImport(SqliteKvsDll)]
+        private static extern int SqliteKVS_begin([In, Out] SqliteKeyValueStore kvs);
+
+        [DllImport(SqliteKvsDll)]
+        private static extern int SqliteKVS_commit([In, Out] SqliteKeyValueStore kvs);
+
+        [DllImport(SqliteKvsDll)]
         private static extern void SqliteKVS_reset_select(SqliteKeyValueStore kvs);
 
         #endregion
@@ -73,22 +80,31 @@ namespace Gilzoide.KeyValueStore
         private IntPtr _stmtUpsert = IntPtr.Zero;
         private IntPtr _stmtDeleteKey = IntPtr.Zero;
         private IntPtr _stmtDeleteAll = IntPtr.Zero;
+        private IntPtr _stmtBegin = IntPtr.Zero;
+        private IntPtr _stmtCommit = IntPtr.Zero;
+        private bool _isInTransaction = false;
+        private bool _isPendingCommit = false;
 
         public void DeleteAll()
         {
+            EnsureTransaction();
             SqliteKVS_delete_all(this);
+            ScheduleCommit();
         }
 
         public void DeleteKey(string key)
         {
+            EnsureTransaction();
             SqliteKVS_delete_key(this, key);
+            ScheduleCommit();
         }
 
         public bool HasKey(string key)
         {
+            EnsureTransaction();
             int result = SqliteKVS_has_key(this, key);
             SqliteKVS_reset_select(this);
-            return result != 0;
+            return result == 1;
         }
 
         public void SetBool(string key, bool value)
@@ -98,12 +114,16 @@ namespace Gilzoide.KeyValueStore
 
         public void SetBytes(string key, byte[] value)
         {
+            EnsureTransaction();
             SqliteKVS_set_bytes(this, key, value, value?.Length ?? 0);
+            ScheduleCommit();
         }
 
         public void SetDouble(string key, double value)
         {
+            EnsureTransaction();
             SqliteKVS_set_double(this, key, value);
+            ScheduleCommit();
         }
 
         public void SetFloat(string key, float value)
@@ -118,12 +138,16 @@ namespace Gilzoide.KeyValueStore
 
         public void SetLong(string key, long value)
         {
+            EnsureTransaction();
             SqliteKVS_set_int(this, key, value);
+            ScheduleCommit();
         }
 
         public void SetString(string key, string value)
         {
+            EnsureTransaction();
             SqliteKVS_set_text(this, key, value, value?.Length * sizeof(char) ?? 0);
+            ScheduleCommit();
         }
 
         public bool TryGetBool(string key, out bool value)
@@ -142,6 +166,7 @@ namespace Gilzoide.KeyValueStore
 
         public bool TryGetBytes(string key, out byte[] value)
         {
+            EnsureTransaction();
             int result = SqliteKVS_try_get_bytes(this, key, out IntPtr bytes, out int length);
             if (result == 1)
             {
@@ -158,6 +183,7 @@ namespace Gilzoide.KeyValueStore
 
         public bool TryGetDouble(string key, out double value)
         {
+            EnsureTransaction();
             int result = SqliteKVS_try_get_double(this, key, out value);
             SqliteKVS_reset_select(this);
             return result == 1;
@@ -193,6 +219,7 @@ namespace Gilzoide.KeyValueStore
 
         public bool TryGetLong(string key, out long value)
         {
+            EnsureTransaction();
             int result = SqliteKVS_try_get_int(this, key, out value);
             SqliteKVS_reset_select(this);
             return result == 1;
@@ -200,6 +227,7 @@ namespace Gilzoide.KeyValueStore
 
         public bool TryGetString(string key, out string value)
         {
+            EnsureTransaction();
             int result = SqliteKVS_try_get_bytes(this, key, out IntPtr utf16, out int length);
             if (result == 1)
             {
@@ -215,7 +243,45 @@ namespace Gilzoide.KeyValueStore
 
         public void Dispose()
         {
+            Commit();
             SqliteKVS_close(this);
+        }
+
+        private void EnsureTransaction()
+        {
+            if (!_isInTransaction)
+            {
+                _isInTransaction = true;
+                SqliteKVS_begin(this);
+            }
+        }
+
+        private void Commit()
+        {
+            if (_isInTransaction)
+            {
+                _isInTransaction = false;
+                SqliteKVS_commit(this);
+            }
+        }
+
+        private async void ScheduleCommit()
+        {
+            if (_isPendingCommit)
+            {
+                return;
+            }
+
+            _isPendingCommit = true;
+            try
+            {
+                await Task.Yield();
+                Commit();
+            }
+            finally
+            {
+                _isPendingCommit = false;
+            }
         }
     }
 }
