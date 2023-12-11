@@ -1,14 +1,39 @@
+ANDROID_NDK_ROOT ?=
 ifeq ($(DEBUG),1)
 	CFLAGS += -O0 -g -DDEBUG
 else
 	CFLAGS += -O3 -DNDEBUG
 endif
 
-Build/macOS/libsqlitekvs.dylib: CFLAGS += -arch arm64 -arch x86_64
-Build/macOS/libsqlitekvs.dylib: LINKFLAGS += -shared -lsqlite3
-Build/macOS/libsqlitekvs.dylib: SqliteKVS.c
+BUILD_DIRS = \
+	build/windows/x86_64 build/windows/x86 \
+	build/linux/x86_64 build/linux/x86 \
+	build/macos build/ios build/tvos \
+	build/android/arm64 build/android/arm32 build/android/x86 build/android/x86_64 \
+	build/webgl
+
+$(BUILD_DIRS):
+	mkdir -p $@
+
+build/macos/libsqlitekvs.dylib: CFLAGS += -arch arm64 -arch x86_64
+build/macos/libsqlitekvs.dylib: LINKFLAGS += -shared -lsqlite3
+build/macos/libsqlitekvs.dylib: src~/SqliteKVS.c | build/macos
 	$(CC) -o $@ $< $(CFLAGS) $(LINKFLAGS)
 
+build/android/%/libsqlitekvs.so: CFLAGS += -fPIC -DEMBED_SQLITE
+build/android/%/libsqlitekvs.so: LINKFLAGS += -shared
+build/android/%/libsqlitekvs.so: src~/SqliteKVS.c src~/sqlite3.c | build/android/%
+	$(CC) -o $@ $< $(CFLAGS) $(LINKFLAGS)
+
+build/android/arm64/libsqlitekvs.so: CC = $(wildcard $(ANDROID_NDK_ROOT)/toolchains/llvm/prebuilt/*/bin/aarch64-linux-android21-clang)
+build/android/arm32/libsqlitekvs.so: CC = $(wildcard $(ANDROID_NDK_ROOT)/toolchains/llvm/prebuilt/*/bin/armv7a-linux-androideabi19-clang)
+build/android/x86_64/libsqlitekvs.so: CC = $(wildcard $(ANDROID_NDK_ROOT)/toolchains/llvm/prebuilt/*/bin/x86_64-linux-android21-clang)
+build/android/x86/libsqlitekvs.so: CC = $(wildcard $(ANDROID_NDK_ROOT)/toolchains/llvm/prebuilt/*/bin/i686-linux-android19-clang)
 
 # Targets
-macos-universal: Build/macOS/libsqlitekvs.dylib
+macos-universal: build/macos/libsqlitekvs.dylib
+
+android-arm64: build/android/arm64/libsqlitekvs.so
+android-arm32: build/android/arm32/libsqlitekvs.so
+android-x86_64: build/android/x86_64/libsqlitekvs.so
+android-x86: build/android/x86/libsqlitekvs.so
