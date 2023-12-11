@@ -102,9 +102,11 @@ int SqliteKVS_open(KVS *kvs, const void *filename_utf16) {
 }
 
 void SqliteKVS_close(KVS *kvs) {
-	sqlite3_close(kvs->db);
 	sqlite3_finalize(kvs->stmt_select);
 	sqlite3_finalize(kvs->stmt_upsert);
+	sqlite3_finalize(kvs->stmt_delete_key);
+	sqlite3_finalize(kvs->stmt_delete_all);
+	sqlite3_close(kvs->db);
 	*kvs = (KVS){};
 }
 
