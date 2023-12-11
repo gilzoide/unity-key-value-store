@@ -20,6 +20,16 @@ build/macos/libsqlitekvs.dylib: LINKFLAGS += -shared -lsqlite3
 build/macos/libsqlitekvs.dylib: src~/SqliteKVS.c | build/macos
 	$(CC) -o $@ $< $(CFLAGS) $(LINKFLAGS)
 
+build/ios/libsqlitekvs.dylib: CFLAGS += -arch arm64 -isysroot $(shell xcrun --show-sdk-path --sdk iphoneos)
+build/ios/libsqlitekvs.dylib: LINKFLAGS += -shared -lsqlite3
+build/ios/libsqlitekvs.dylib: src~/SqliteKVS.c | build/ios
+	$(CC) -o $@ $< $(CFLAGS) $(LINKFLAGS)
+
+build/tvos/libsqlitekvs.dylib: CFLAGS += -arch arm64 -isysroot $(shell xcrun --show-sdk-path --sdk appletvos)
+build/tvos/libsqlitekvs.dylib: LINKFLAGS += -shared -lsqlite3
+build/tvos/libsqlitekvs.dylib: src~/SqliteKVS.c | build/tvos
+	$(CC) -o $@ $< $(CFLAGS) $(LINKFLAGS)
+
 build/android/%/libsqlitekvs.so: CFLAGS += -fPIC -DEMBED_SQLITE
 build/android/%/libsqlitekvs.so: LINKFLAGS += -shared
 build/android/%/libsqlitekvs.so: src~/SqliteKVS.c src~/sqlite3.c | build/android/%
@@ -32,6 +42,8 @@ build/android/x86/libsqlitekvs.so: CC = $(wildcard $(ANDROID_NDK_ROOT)/toolchain
 
 # Targets
 macos-universal: build/macos/libsqlitekvs.dylib
+ios-universal: build/ios/libsqlitekvs.dylib
+tvos-universal: build/tvos/libsqlitekvs.dylib
 
 android-arm64: build/android/arm64/libsqlitekvs.so
 android-arm32: build/android/arm32/libsqlitekvs.so
