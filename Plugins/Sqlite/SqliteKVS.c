@@ -2,11 +2,11 @@
 #include <sqlite3.h>
 
 // SQL statements
-static const char SQL_CREATE_TABLE[] = "CREATE TABLE IF NOT EXISTS KeyValueStore (key TEXT NOT NULL PRIMARY KEY COLLATE BINARY, value BLOB)";
-static const char SQL_SELECT[] = "SELECT value FROM KeyValueStore WHERE key = ?1";
-static const char SQL_UPSERT[] = "INSERT INTO KeyValueStore(key, value) VALUES(?1, ?2) ON CONFLICT(key) DO UPDATE SET value = ?2";
-static const char SQL_DELETE_KEY[] = "DELETE FROM KeyValueStore WHERE key = ?1";
-static const char SQL_DELETE_ALL[] = "DELETE FROM KeyValueStore";
+#define SQL_CREATE_TABLE "CREATE TABLE IF NOT EXISTS KeyValueStore (key TEXT NOT NULL PRIMARY KEY COLLATE BINARY, value BLOB)"
+#define SQL_SELECT "SELECT value FROM KeyValueStore WHERE key = ?1"
+#define SQL_UPSERT "INSERT INTO KeyValueStore(key, value) VALUES(?1, ?2) ON CONFLICT(key) DO UPDATE SET value = ?2"
+#define SQL_DELETE_KEY "DELETE FROM KeyValueStore WHERE key = ?1"
+#define SQL_DELETE_ALL "DELETE FROM KeyValueStore"
 
 // SQL statement binding indices
 #define SELECT_KEY_INDEX 1
@@ -25,7 +25,7 @@ typedef struct {
 // MARK: Helper functions
 static int SqliteKVS_create_table(KVS *kvs) {
 	sqlite3_stmt *create_table;
-	int result = sqlite3_prepare(kvs->db, SQL_CREATE_TABLE, -1, &create_table, NULL);
+	int result = sqlite3_prepare(kvs->db, SQL_CREATE_TABLE, sizeof(SQL_CREATE_TABLE), &create_table, NULL);
 	if (result != SQLITE_OK) {
 		return result;
 	}
@@ -38,7 +38,7 @@ static int SqliteKVS_create_table(KVS *kvs) {
 
 static void SqliteKVS_prepare_select(KVS *kvs, const void *key_utf16) {
 	if (kvs->stmt_select == NULL) {
-		sqlite3_prepare(kvs->db, SQL_SELECT, -1, &kvs->stmt_select, NULL);
+		sqlite3_prepare(kvs->db, SQL_SELECT, sizeof(SQL_SELECT), &kvs->stmt_select, NULL);
 	}
 	else {
 		sqlite3_reset(kvs->stmt_select);
@@ -48,7 +48,7 @@ static void SqliteKVS_prepare_select(KVS *kvs, const void *key_utf16) {
 
 static void SqliteKVS_prepare_upsert(KVS *kvs, const void *key_utf16) {
 	if (kvs->stmt_upsert == NULL) {
-		sqlite3_prepare(kvs->db, SQL_UPSERT, -1, &kvs->stmt_upsert, NULL);
+		sqlite3_prepare(kvs->db, SQL_UPSERT, sizeof(SQL_UPSERT), &kvs->stmt_upsert, NULL);
 	}
 	else {
 		sqlite3_reset(kvs->stmt_upsert);
@@ -61,7 +61,7 @@ static void SqliteKVS_reset_upsert(KVS *kvs) {
 
 static void SqliteKVS_prepare_delete_key(KVS *kvs, const void *key_utf16) {
 	if (kvs->stmt_delete_key == NULL) {
-		sqlite3_prepare(kvs->db, SQL_DELETE_KEY, -1, &kvs->stmt_delete_key, NULL);
+		sqlite3_prepare(kvs->db, SQL_DELETE_KEY, sizeof(SQL_DELETE_KEY), &kvs->stmt_delete_key, NULL);
 	}
 	else {
 		sqlite3_reset(kvs->stmt_delete_key);
@@ -74,7 +74,7 @@ static void SqliteKVS_reset_delete_key(KVS *kvs) {
 
 static void SqliteKVS_prepare_delete_all(KVS *kvs) {
 	if (kvs->stmt_delete_all == NULL) {
-		sqlite3_prepare(kvs->db, SQL_DELETE_ALL, -1, &kvs->stmt_delete_all, NULL);
+		sqlite3_prepare(kvs->db, SQL_DELETE_ALL, sizeof(SQL_DELETE_ALL), &kvs->stmt_delete_all, NULL);
 	}
 	else {
 		sqlite3_reset(kvs->stmt_delete_all);
