@@ -29,6 +29,9 @@ namespace Gilzoide.KeyValueStore
         private static extern int SqliteKVS_try_get_bytes([In, Out] SqliteKeyValueStore kvs, string key, out IntPtr bytes, out int length);
 
         [DllImport(SqliteKvsDll, CharSet = CharSet.Unicode)]
+        private static extern int SqliteKVS_has_key([In, Out] SqliteKeyValueStore kvs, string key);
+
+        [DllImport(SqliteKvsDll, CharSet = CharSet.Unicode)]
         private static extern int SqliteKVS_set_int([In, Out] SqliteKeyValueStore kvs, string key, long value);
 
         [DllImport(SqliteKvsDll, CharSet = CharSet.Unicode)]
@@ -69,7 +72,9 @@ namespace Gilzoide.KeyValueStore
 
         public bool HasKey(string key)
         {
-            throw new NotImplementedException();
+            int result = SqliteKVS_has_key(this, key);
+            SqliteKVS_reset_select(this);
+            return result != 0;
         }
 
         public void SetBool(string key, bool value)

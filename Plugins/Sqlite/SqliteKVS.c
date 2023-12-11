@@ -135,6 +135,11 @@ int SqliteKVS_try_get_bytes(KVS *kvs, const void *key_utf16, const void **out_va
 	}
 }
 
+int SqliteKVS_has_key(KVS *kvs, const void *key_utf16) {
+	SqliteKVS_prepare_select(kvs, key_utf16);
+	return sqlite3_step(kvs->stmt_select) == SQLITE_ROW;
+}
+
 // MARK: Set functions
 int SqliteKVS_set_int(KVS *kvs, const void *key_utf16, sqlite3_int64 value) {
 	SqliteKVS_prepare_upsert(kvs, key_utf16);
@@ -160,7 +165,7 @@ int SqliteKVS_set_bytes(KVS *kvs, const void *key_utf16, const void *bytes, sqli
 	return sqlite3_step(kvs->stmt_upsert);
 }
 
-// MARK: Reset statements, to be called by C# to avoid losing text/blob data
+// MARK: Reset statements, to be called by C# after getting text/blob data
 void SqliteKVS_reset_select(KVS *kvs) {
 	sqlite3_reset(kvs->stmt_select);
 }
