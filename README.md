@@ -26,9 +26,12 @@ Possible implementations of Key-Value Stores include, but are not limited to:
 ## Implementations
 Key-Value Stores:
 - [DictionaryKeyValueStore](Runtime/DictionaryKeyValueStore.cs): stores data in a `Dictionary<string, object>`.
-  May be persisted in disk if [Json.NET](https://www.newtonsoft.com/json) is installed in the project, for example via the [Newtonsoft Json Unity Package](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@latest).
-  Supports compression using [GZip](https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.gzipstream?view=netstandard-2.1).
+  May be persisted in disk if [Newtonsoft Json Unity Package](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@latest) is installed in the project.
+  Supports compression using [GZip](https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.gzipstream?view=netstandard-2.1)
+  and encryption using [SymmetricAlgorithms](https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.symmetricalgorithm?view=netstandard-2.1) like AES, DES and Rijndael.
 - [PlayerPrefsKeyValueStore](Runtime/PlayerPrefsKeyValueStore.cs): stores data in Unity's [PlayerPrefs](https://docs.unity3d.com/ScriptReference/PlayerPrefs.html) class
+- [SqliteKeyValueStore](Runtime/SqliteKeyValueStore.cs): stores data using the [SQLite](https://sqlite.org) database engine.
+  Supported platforms: Windows, macOS, iOS, tvOS, Android and WebGL.
 
 Object serializers:
 - [JsonUtilityTextSerializer](Runtime/ObjectSerializers/JsonUtilityTextSerializer.cs): the default serializer, uses Unity's [JsonUtility](https://docs.unity3d.com/ScriptReference/JsonUtility.html)
