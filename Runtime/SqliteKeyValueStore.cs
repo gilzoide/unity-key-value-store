@@ -8,10 +8,14 @@ namespace Gilzoide.KeyValueStore
     {
         #region Native functions
 
+#if UNITY_WEBGL && !UNITY_EDITOR
+        private const string SqliteKvsDll = "__Internal";
+#else
         private const string SqliteKvsDll = "sqlitekvs";
+#endif
 
         [DllImport(SqliteKvsDll, CharSet = CharSet.Unicode)]
-        private static extern int SqliteKVS_open([Out] SqliteKeyValueStore kvs, string filename);
+        private static extern int SqliteKVS_open([In, Out] SqliteKeyValueStore kvs, string filename);
 
         [DllImport(SqliteKvsDll)]
         private static extern void SqliteKVS_close([In, Out] SqliteKeyValueStore kvs);
@@ -56,7 +60,11 @@ namespace Gilzoide.KeyValueStore
 
         public SqliteKeyValueStore(string filename)
         {
-            SqliteKVS_open(this, filename);
+            int result = SqliteKVS_open(this, filename);
+            if (result != 101)
+            {
+                throw new InvalidOperationException(result.ToString());
+            }
         }
 
         private IntPtr _db = IntPtr.Zero;
