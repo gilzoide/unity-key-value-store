@@ -60,11 +60,12 @@ namespace Gilzoide.KeyValueStore
 
         public SqliteKeyValueStore(string filename)
         {
-            int result = SqliteKVS_open(this, filename);
-            if (result != 101)
-            {
-                throw new InvalidOperationException(result.ToString());
-            }
+            SqliteKVS_open(this, filename);
+        }
+
+        ~SqliteKeyValueStore()
+        {
+            Dispose();
         }
 
         private IntPtr _db = IntPtr.Zero;
