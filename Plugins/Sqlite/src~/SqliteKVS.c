@@ -3,6 +3,7 @@
 #ifdef EMBED_SQLITE
 #include "sqlite3.h"
 #include "sqlite3.c"
+const char sqlite3_version[] = SQLITE_VERSION;
 #else
 #include <sqlite3.h>
 #endif
