@@ -1,5 +1,7 @@
+using System;
 using System.IO;
 using System.IO.Compression;
+using System.Security.Cryptography;
 
 namespace Gilzoide.KeyValueStore.Utils
 {
@@ -7,54 +9,105 @@ namespace Gilzoide.KeyValueStore.Utils
     {
         public string FilePath { get; set; }
         public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.NoCompression;
+        public ICryptoTransform Encryptor { get; set; } = null;
+        public ICryptoTransform Decryptor { get; set; } = null;
+
+        public SymmetricAlgorithm EncryptionAlgorithm
+        {
+            set
+            {
+                Encryptor = value.CreateEncryptor();
+                Decryptor = value.CreateDecryptor();
+            }
+        }
 
         public void Load()
         {
-            using (var fileStream = this.OpenFileReadStream())
+            FileStream fileStream = this.OpenFileReadStream();
+            if (fileStream == null)
             {
-                if (fileStream == null)
-                {
-                    return;
-                }
+                return;
+            }
 
-                if (CompressionLevel == CompressionLevel.NoCompression)
-                {
-                    Load(fileStream);
-                }
-                else
-                {
-                    using (var gzipStream = new GZipStream(fileStream, CompressionMode.Decompress))
-                    {
-                        Load(gzipStream);
-                    }
-                }
+            Stream stream = fileStream;
+            using (fileStream)
+            using (WrapDecompress(ref stream))
+            using (WrapDecrypt(ref stream))
+            {
+                Load(stream);
             }
         }
 
         public void Save()
         {
-            using (var fileStream = this.OpenFileWriteStream())
+            FileStream fileStream = this.OpenFileWriteStream();
+            if (fileStream == null)
             {
-                if (fileStream == null)
-                {
-                    return;
-                }
+                return;
+            }
 
-                if (CompressionLevel == CompressionLevel.NoCompression)
-                {
-                    Save(fileStream);
-                }
-                else
-                {
-                    using (var gzipStream = new GZipStream(fileStream, CompressionLevel))
-                    {
-                        Save(gzipStream);
-                    }
-                }
+            Stream stream = fileStream;
+            using (fileStream)
+            using (WrapCompress(ref stream))
+            using (WrapEncrypt(ref stream))
+            {
+                Save(stream);
             }
         }
 
         public abstract void Load(Stream stream);
         public abstract void Save(Stream stream);
+
+        protected IDisposable WrapDecompress(ref Stream stream)
+        {
+            if (CompressionLevel == CompressionLevel.NoCompression)
+            {
+                return null;
+            }
+            else
+            {
+                stream = new GZipStream(stream, CompressionMode.Decompress);
+                return stream;
+            }
+        }
+
+        protected IDisposable WrapCompress(ref Stream stream)
+        {
+            if (CompressionLevel == CompressionLevel.NoCompression)
+            {
+                return null;
+            }
+            else
+            {
+                stream = new GZipStream(stream, CompressionLevel);
+                return stream;
+            }
+        }
+
+        protected IDisposable WrapDecrypt(ref Stream stream)
+        {
+            if (Decryptor == null)
+            {
+                return null;
+            }
+            else
+            {
+                stream = new CryptoStream(stream, Decryptor, CryptoStreamMode.Read);
+                return stream;
+            }
+        }
+
+        protected IDisposable WrapEncrypt(ref Stream stream)
+        {
+            if (Encryptor == null)
+            {
+                return null;
+            }
+            else
+            {
+                stream = new CryptoStream(stream, Encryptor, CryptoStreamMode.Write);
+                return stream;
+            }
+        }
     }
 }
