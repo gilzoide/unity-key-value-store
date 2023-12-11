@@ -5,16 +5,21 @@
 static const char SQL_CREATE_TABLE[] = "CREATE TABLE IF NOT EXISTS KeyValueStore (key TEXT NOT NULL PRIMARY KEY COLLATE BINARY, value BLOB)";
 static const char SQL_SELECT[] = "SELECT value FROM KeyValueStore WHERE key = ?1";
 static const char SQL_UPSERT[] = "INSERT INTO KeyValueStore(key, value) VALUES(?1, ?2) ON CONFLICT(key) DO UPDATE SET value = ?2";
+static const char SQL_DELETE_KEY[] = "DELETE FROM KeyValueStore WHERE key = ?1";
+static const char SQL_DELETE_ALL[] = "DELETE FROM KeyValueStore";
 
 // SQL statement binding indices
-static const int SELECT_KEY_INDEX = 1;
-static const int UPSERT_KEY_INDEX = 1;
-static const int UPSERT_VALUE_INDEX = 2;
+#define SELECT_KEY_INDEX 1
+#define UPSERT_KEY_INDEX 1
+#define UPSERT_VALUE_INDEX 2
+#define DELETE_KEY_INDEX 1
 
 typedef struct {
 	sqlite3 *db;
 	sqlite3_stmt *stmt_select;
 	sqlite3_stmt *stmt_upsert;
+	sqlite3_stmt *stmt_delete_key;
+	sqlite3_stmt *stmt_delete_all;
 } KVS;
 
 // MARK: Helper functions
@@ -49,6 +54,34 @@ static void SqliteKVS_prepare_upsert(KVS *kvs, const void *key_utf16) {
 		sqlite3_reset(kvs->stmt_upsert);
 	}
 	sqlite3_bind_text16(kvs->stmt_upsert, UPSERT_KEY_INDEX, key_utf16, -1, SQLITE_STATIC);
+}
+static void SqliteKVS_reset_upsert(KVS *kvs) {
+	sqlite3_reset(kvs->stmt_upsert);
+}
+
+static void SqliteKVS_prepare_delete_key(KVS *kvs, const void *key_utf16) {
+	if (kvs->stmt_delete_key == NULL) {
+		sqlite3_prepare(kvs->db, SQL_DELETE_KEY, -1, &kvs->stmt_delete_key, NULL);
+	}
+	else {
+		sqlite3_reset(kvs->stmt_delete_key);
+	}
+	sqlite3_bind_text16(kvs->stmt_delete_key, DELETE_KEY_INDEX, key_utf16, -1, SQLITE_STATIC);
+}
+static void SqliteKVS_reset_delete_key(KVS *kvs) {
+	sqlite3_reset(kvs->stmt_delete_key);
+}
+
+static void SqliteKVS_prepare_delete_all(KVS *kvs) {
+	if (kvs->stmt_delete_all == NULL) {
+		sqlite3_prepare(kvs->db, SQL_DELETE_ALL, -1, &kvs->stmt_delete_all, NULL);
+	}
+	else {
+		sqlite3_reset(kvs->stmt_delete_all);
+	}
+}
+static void SqliteKVS_reset_delete_all(KVS *kvs) {
+	sqlite3_reset(kvs->stmt_delete_all);
 }
 
 // MARK: Open/Close
@@ -144,32 +177,51 @@ int SqliteKVS_has_key(KVS *kvs, const void *key_utf16) {
 int SqliteKVS_set_int(KVS *kvs, const void *key_utf16, sqlite3_int64 value) {
 	SqliteKVS_prepare_upsert(kvs, key_utf16);
 	sqlite3_bind_int64(kvs->stmt_upsert, UPSERT_VALUE_INDEX, value);
-	return sqlite3_step(kvs->stmt_upsert);
+	int result = sqlite3_step(kvs->stmt_upsert);
+	SqliteKVS_reset_upsert(kvs);
+	return result;
 }
 
 int SqliteKVS_set_double(KVS *kvs, const void *key_utf16, double value) {
 	SqliteKVS_prepare_upsert(kvs, key_utf16);
 	sqlite3_bind_double(kvs->stmt_upsert, UPSERT_VALUE_INDEX, value);
-	return sqlite3_step(kvs->stmt_upsert);
+	int result = sqlite3_step(kvs->stmt_upsert);
+	SqliteKVS_reset_upsert(kvs);
+	return result;
 }
 
 int SqliteKVS_set_text(KVS *kvs, const void *key_utf16, const void *value_utf16, sqlite3_int64 length) {
 	SqliteKVS_prepare_upsert(kvs, key_utf16);
 	sqlite3_bind_text16(kvs->stmt_upsert, UPSERT_VALUE_INDEX, value_utf16, length, SQLITE_STATIC);
-	return sqlite3_step(kvs->stmt_upsert);
+	int result = sqlite3_step(kvs->stmt_upsert);
+	SqliteKVS_reset_upsert(kvs);
+	return result;
 }
 
 int SqliteKVS_set_bytes(KVS *kvs, const void *key_utf16, const void *bytes, sqlite3_int64 length) {
 	SqliteKVS_prepare_upsert(kvs, key_utf16);
 	sqlite3_bind_blob64(kvs->stmt_upsert, UPSERT_VALUE_INDEX, bytes, length, SQLITE_STATIC);
-	return sqlite3_step(kvs->stmt_upsert);
+	int result = sqlite3_step(kvs->stmt_upsert);
+	SqliteKVS_reset_upsert(kvs);
+	return result;
 }
 
-// MARK: Reset statements, to be called by C# after getting text/blob data
+// MARK: Delete functions
+int SqliteKVS_delete_key(KVS *kvs, const void *key_utf16) {
+	SqliteKVS_prepare_delete_key(kvs, key_utf16);
+	int result = sqlite3_step(kvs->stmt_delete_key);
+	SqliteKVS_reset_delete_key(kvs);
+	return result;
+}
+
+int SqliteKVS_delete_all(KVS *kvs) {
+	SqliteKVS_prepare_delete_all(kvs);
+	int result = sqlite3_step(kvs->stmt_delete_all);
+	SqliteKVS_reset_delete_all(kvs);
+	return result;
+}
+
+// MARK: Reset statement, to be called by C# after getting text/blob data
 void SqliteKVS_reset_select(KVS *kvs) {
 	sqlite3_reset(kvs->stmt_select);
-}
-
-void SqliteKVS_reset_upsert(KVS *kvs) {
-	sqlite3_reset(kvs->stmt_upsert);
 }

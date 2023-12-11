@@ -43,11 +43,14 @@ namespace Gilzoide.KeyValueStore
         [DllImport(SqliteKvsDll, CharSet = CharSet.Unicode)]
         private static extern int SqliteKVS_set_bytes([In, Out] SqliteKeyValueStore kvs, string key, byte[] bytes, long length);
 
-        [DllImport(SqliteKvsDll)]
-        private static extern void SqliteKVS_reset_select(SqliteKeyValueStore kvs);
+        [DllImport(SqliteKvsDll, CharSet = CharSet.Unicode)]
+        private static extern int SqliteKVS_delete_key([In, Out] SqliteKeyValueStore kvs, string key);
 
         [DllImport(SqliteKvsDll)]
-        private static extern void SqliteKVS_reset_upsert(SqliteKeyValueStore kvs);
+        private static extern int SqliteKVS_delete_all([In, Out] SqliteKeyValueStore kvs);
+
+        [DllImport(SqliteKvsDll)]
+        private static extern void SqliteKVS_reset_select(SqliteKeyValueStore kvs);
 
         #endregion
 
@@ -59,15 +62,17 @@ namespace Gilzoide.KeyValueStore
         private IntPtr _db = IntPtr.Zero;
         private IntPtr _stmtSelect = IntPtr.Zero;
         private IntPtr _stmtUpsert = IntPtr.Zero;
+        private IntPtr _stmtDeleteKey = IntPtr.Zero;
+        private IntPtr _stmtDeleteAll = IntPtr.Zero;
 
         public void DeleteAll()
         {
-            throw new NotImplementedException();
+            SqliteKVS_delete_all(this);
         }
 
         public void DeleteKey(string key)
         {
-            throw new NotImplementedException();
+            SqliteKVS_delete_key(this, key);
         }
 
         public bool HasKey(string key)
@@ -85,13 +90,11 @@ namespace Gilzoide.KeyValueStore
         public void SetBytes(string key, byte[] value)
         {
             SqliteKVS_set_bytes(this, key, value, value?.Length ?? 0);
-            SqliteKVS_reset_upsert(this);
         }
 
         public void SetDouble(string key, double value)
         {
             SqliteKVS_set_double(this, key, value);
-            SqliteKVS_reset_upsert(this);
         }
 
         public void SetFloat(string key, float value)
@@ -107,13 +110,11 @@ namespace Gilzoide.KeyValueStore
         public void SetLong(string key, long value)
         {
             SqliteKVS_set_int(this, key, value);
-            SqliteKVS_reset_upsert(this);
         }
 
         public void SetString(string key, string value)
         {
             SqliteKVS_set_text(this, key, value, value?.Length * sizeof(char) ?? 0);
-            SqliteKVS_reset_upsert(this);
         }
 
         public bool TryGetBool(string key, out bool value)
