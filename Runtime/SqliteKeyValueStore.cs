@@ -109,6 +109,7 @@ namespace Gilzoide.KeyValueStore
             Dispose();
         }
 
+#pragma warning disable IDE0044
         private IntPtr _db = IntPtr.Zero;
         private IntPtr _stmtSelect = IntPtr.Zero;
         private IntPtr _stmtUpsert = IntPtr.Zero;
@@ -118,6 +119,7 @@ namespace Gilzoide.KeyValueStore
         private IntPtr _stmtCommit = IntPtr.Zero;
         private bool _isInTransaction = false;
         private bool _isPendingCommit = false;
+#pragma warning restore IDE0044
 
         public void DeleteAll()
         {
