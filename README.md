@@ -1,4 +1,4 @@
-# Unity Key-Value Store
+# Key-Value Store for Unity
 Simple to use Key-Value Store interface and implementations for Unity, suitable for save systems.
 
 Key-Value Stores provide a simple and effective way of persisting arbitrary data mapped to string keys.
@@ -29,6 +29,7 @@ Key-Value Stores:
   May be persisted in disk if [Json.NET](https://www.newtonsoft.com/json) is installed in the project, for example via the [Newtonsoft Json Unity Package](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@latest).
   Supports compression using [GZip](https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.gzipstream?view=netstandard-2.1).
 - [PlayerPrefsKeyValueStore](Runtime/PlayerPrefsKeyValueStore.cs): stores data in Unity's [PlayerPrefs](https://docs.unity3d.com/ScriptReference/PlayerPrefs.html) class
+- (external) [SqliteKeyValueStore](https://github.com/gilzoide/unity-key-value-store-sqlite): stores data using the [SQLite](https://sqlite.org) database engine.
 
 Object serializers:
 - [JsonUtilityTextSerializer](Runtime/ObjectSerializers/JsonUtilityTextSerializer.cs): the default serializer, uses Unity's [JsonUtility](https://docs.unity3d.com/ScriptReference/JsonUtility.html)
