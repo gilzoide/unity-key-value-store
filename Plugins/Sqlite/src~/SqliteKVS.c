@@ -282,9 +282,9 @@ int SqliteKVS_commit(KVS *kvs) {
 }
 
 // MARK: Arbitrary SQL support, use with care!
-int SqliteKVS_run_sql(KVS *kvs, const char *sql, void (*error_callback)(const char *str)) {
+int SqliteKVS_run_sql(KVS *kvs, const char *sql, void (*error_callback)(const char *str), int (*row_callback)(void *, int, char**, char**)) {
 	char *err;
-	int result = sqlite3_exec(kvs->db, sql, NULL, NULL, &err);
+	int result = sqlite3_exec(kvs->db, sql, row_callback, kvs, &err);
 	if (err) {
 		if (error_callback) {
 			error_callback(err);
