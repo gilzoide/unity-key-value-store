@@ -285,8 +285,11 @@ namespace Gilzoide.KeyValueStore
 
         unsafe public void Pragma(string pragma, List<string> out_values = null)
         {
-            Debug.Assert(pragma.TrimStart().StartsWith("pragma ", true, CultureInfo.InvariantCulture), "Pragma strings must start with 'PRAGMA'");
             Debug.Assert(!pragma.Contains(";"), "Pragma strings must not contain ';'");
+            if (!pragma.TrimStart().StartsWith("pragma ", true, CultureInfo.InvariantCulture))
+            {
+                pragma = "PRAGMA " + pragma;
+            }
             if (out_values != null)
             {
                 RunSql(pragma, SqlRowCallback);
