@@ -137,6 +137,8 @@ void SqliteKVS_close(KVS *kvs) {
 	sqlite3_finalize(kvs->stmt_upsert);
 	sqlite3_finalize(kvs->stmt_delete_key);
 	sqlite3_finalize(kvs->stmt_delete_all);
+	sqlite3_finalize(kvs->stmt_begin);
+	sqlite3_finalize(kvs->stmt_commit);
 	sqlite3_close(kvs->db);
 	*kvs = (KVS){};
 }
