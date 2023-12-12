@@ -5,28 +5,28 @@ namespace Gilzoide.KeyValueStore
 {
     public partial class DictionaryKeyValueStore : IKeyValueStore
     {
-        protected Dictionary<string, object> dictionary = new Dictionary<string, object>();
+        protected Dictionary<string, object> _dictionary = new Dictionary<string, object>();
 
         public bool HasKey(string key)
         {
-            return dictionary.ContainsKey(key);
+            return _dictionary.ContainsKey(key);
         }
 
         public void DeleteKey(string key)
         {
-            dictionary.Remove(key);
+            _dictionary.Remove(key);
         }
 
         public void DeleteAll()
         {
-            dictionary.Clear();
+            _dictionary.Clear();
         }
 
         public bool TryGetBool(string key, out bool value)
         {
             try
             {
-                if (dictionary.TryGetValue(key, out object obj))
+                if (_dictionary.TryGetValue(key, out object obj))
                 {
                     value = Convert.ToBoolean(obj);
                     return true;
@@ -48,7 +48,7 @@ namespace Gilzoide.KeyValueStore
         {
             try
             {
-                if (dictionary.TryGetValue(key, out object obj))
+                if (_dictionary.TryGetValue(key, out object obj))
                 {
                     value = Convert.ToInt32(obj);
                     return true;
@@ -70,7 +70,7 @@ namespace Gilzoide.KeyValueStore
         {
             try
             {
-                if (dictionary.TryGetValue(key, out object obj))
+                if (_dictionary.TryGetValue(key, out object obj))
                 {
                     value = Convert.ToInt64(obj);
                     return true;
@@ -92,7 +92,7 @@ namespace Gilzoide.KeyValueStore
         {
             try
             {
-                if (dictionary.TryGetValue(key, out object obj))
+                if (_dictionary.TryGetValue(key, out object obj))
                 {
                     value = Convert.ToSingle(obj);
                     return true;
@@ -114,7 +114,7 @@ namespace Gilzoide.KeyValueStore
         {
             try
             {
-                if (dictionary.TryGetValue(key, out object obj))
+                if (_dictionary.TryGetValue(key, out object obj))
                 {
                     value = Convert.ToDouble(obj);
                     return true;
@@ -136,7 +136,7 @@ namespace Gilzoide.KeyValueStore
         {
             try
             {
-                if (dictionary.TryGetValue(key, out object obj))
+                if (_dictionary.TryGetValue(key, out object obj))
                 {
                     value = obj.ToString();
                     return true;
@@ -178,37 +178,37 @@ namespace Gilzoide.KeyValueStore
 
         public void SetBool(string key, bool value)
         {
-            dictionary[key] = value;
+            _dictionary[key] = value;
         }
 
         public void SetInt(string key, int value)
         {
-            dictionary[key] = value;
+            _dictionary[key] = value;
         }
 
         public void SetLong(string key, long value)
         {
-            dictionary[key] = value;
+            _dictionary[key] = value;
         }
 
         public void SetFloat(string key, float value)
         {
-            dictionary[key] = value;
+            _dictionary[key] = value;
         }
 
         public void SetDouble(string key, double value)
         {
-            dictionary[key] = value;
+            _dictionary[key] = value;
         }
 
         public void SetString(string key, string value)
         {
-            dictionary[key] = value;
+            _dictionary[key] = value;
         }
 
         public void SetBytes(string key, byte[] value)
         {
-            dictionary[key] = Convert.ToBase64String(value);
+            _dictionary[key] = Convert.ToBase64String(value);
         }
     }
 }

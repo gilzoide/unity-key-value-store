@@ -7,13 +7,13 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
 {
     public class XmlTextSerializer : ITextSerializer
     {
-        private readonly static Dictionary<Type, XmlSerializer> xmlSerializerCache = new Dictionary<Type, XmlSerializer>();
+        private readonly static Dictionary<Type, XmlSerializer> _xmlSerializerCache = new Dictionary<Type, XmlSerializer>();
         public XmlSerializer GetCachedXmlSerializer(Type type)
         {
-            if (!xmlSerializerCache.TryGetValue(type, out XmlSerializer xmlSerializer))
+            if (!_xmlSerializerCache.TryGetValue(type, out XmlSerializer xmlSerializer))
             {
                 xmlSerializer = new XmlSerializer(type);
-                xmlSerializerCache[type] = xmlSerializer;
+                _xmlSerializerCache[type] = xmlSerializer;
             }
             return xmlSerializer;
         }

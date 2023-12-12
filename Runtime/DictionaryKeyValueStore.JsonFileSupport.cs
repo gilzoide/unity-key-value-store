@@ -14,7 +14,7 @@ namespace Gilzoide.KeyValueStore
         {
             using (var streamReader = new StreamReader(stream))
             {
-                dictionary = (Dictionary<string, object>) JsonSerializer.Deserialize(streamReader, typeof(Dictionary<string, object>));
+                _dictionary = (Dictionary<string, object>) JsonSerializer.Deserialize(streamReader, typeof(Dictionary<string, object>));
             }
         }
 
@@ -22,7 +22,7 @@ namespace Gilzoide.KeyValueStore
         {
             using (var streamWriter = new StreamWriter(stream))
             {
-                JsonSerializer.Serialize(streamWriter, dictionary);
+                JsonSerializer.Serialize(streamWriter, _dictionary);
             }
         }
     }

@@ -10,18 +10,18 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
         public IDictionary<Type, IObjectSerializer> TypeToSerializerMap { get; set; } = new Dictionary<Type, IObjectSerializer>();
         public IObjectSerializer DefaultSerializer
         {
-            get => defaultSerializer;
+            get => _defaultSerializer;
             set
             {
                 if (value == null)
                 {
                     throw new ArgumentNullException(nameof(DefaultSerializer));
                 }
-                defaultSerializer = value;
+                _defaultSerializer = value;
             }
         }
 
-        private IObjectSerializer defaultSerializer = new JsonUtilityTextSerializer();
+        private IObjectSerializer _defaultSerializer = new JsonUtilityTextSerializer();
 
         public IObjectSerializer GetObjectSerializer(Type type)
         {

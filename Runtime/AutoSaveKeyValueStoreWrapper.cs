@@ -5,7 +5,7 @@ namespace Gilzoide.KeyValueStore
 {
     public class AutoSaveKeyValueStoreWrapper : AKeyValueStoreWrapper<ISavableKeyValueStore>, ISavableKeyValueStore
     {
-        private bool isSaveScheduled = false;
+        private bool _isSaveScheduled = false;
 
         public AutoSaveKeyValueStoreWrapper(ISavableKeyValueStore kvs) : base(kvs)
         {
@@ -77,12 +77,12 @@ namespace Gilzoide.KeyValueStore
 
         private async void SaveNextFrame()
         {
-            if (isSaveScheduled)
+            if (_isSaveScheduled)
             {
                 return;
             }
 
-            isSaveScheduled = true;
+            _isSaveScheduled = true;
             try
             {
                 await Task.Yield();
@@ -90,7 +90,7 @@ namespace Gilzoide.KeyValueStore
             }
             finally
             {
-                isSaveScheduled = false;
+                _isSaveScheduled = false;
             }
         }
     }
