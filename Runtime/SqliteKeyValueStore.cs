@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AOT;
+using UnityEngine;
 
 namespace Gilzoide.KeyValueStore
 {
@@ -65,20 +68,33 @@ namespace Gilzoide.KeyValueStore
         private static extern void SqliteKVS_reset_select(SqliteKeyValueStore kvs);
 
         [DllImport(SqliteKvsDll, CharSet = CharSet.Ansi)]
-        private static extern int SqliteKVS_run_sql([In, Out] SqliteKeyValueStore kvs, string sql, SqlErrorDelegate errorCallback);
+        private static extern int SqliteKVS_run_sql([In, Out] SqliteKeyValueStore kvs, string sql, SqlErrorDelegate errorCallback, SqlRowDelegate rowCallback);
 
         #endregion
 
         #region Native callbacks
 
         private delegate void SqlErrorDelegate(IntPtr errorUtf8);
+        unsafe private delegate int SqlRowDelegate(IntPtr kvs, int columnCount, IntPtr* values, IntPtr* columnNames);
 
+        private static List<string> _sqlReturn = new List<string>();
         private static string _sqlError;
 
         [MonoPInvokeCallback(typeof(SqlErrorDelegate))]
         private static void SqlErrorCallback(IntPtr errorUtf8)
         {
             _sqlError = Marshal.PtrToStringUTF8(errorUtf8);
+        }
+
+        [MonoPInvokeCallback(typeof(SqlRowDelegate))]
+        unsafe private static int SqlRowCallback(IntPtr kvs, int columnCount, IntPtr* values, IntPtr* columnNames)
+        {
+            for (int i = 0; i < columnCount; i++)
+            {
+                string value = Marshal.PtrToStringUTF8(values[i]);
+                _sqlReturn.Add(value);
+            }
+            return 0;
         }
 
         #endregion
@@ -265,6 +281,22 @@ namespace Gilzoide.KeyValueStore
             SqliteKVS_close(this);
         }
 
+        unsafe public void Pragma(string pragma, List<string> out_values = null)
+        {
+            Debug.Assert(pragma.TrimStart().StartsWith("pragma ", true, CultureInfo.InvariantCulture), "Pragma strings must start with 'PRAGMA'");
+            Debug.Assert(!pragma.Contains(";"), "Pragma strings must not contain ';'");
+            if (out_values != null)
+            {
+                RunSql(pragma, SqlRowCallback);
+                out_values.AddRange(_sqlReturn);
+                _sqlReturn.Clear();
+            }
+            else
+            {
+                RunSql(pragma);
+            }
+        }
+
         public void Vacuum()
         {
             Commit();
@@ -308,10 +340,10 @@ namespace Gilzoide.KeyValueStore
             }
         }
 
-        private void RunSql(string sql)
+        private void RunSql(string sql, SqlRowDelegate sqlRowDelegate = null)
         {
             _sqlError = null;
-            SqliteKVS_run_sql(this, sql, SqlErrorCallback);
+            SqliteKVS_run_sql(this, sql, SqlErrorCallback, sqlRowDelegate);
             if (_sqlError != null)
             {
                 throw new InvalidOperationException(_sqlError);
