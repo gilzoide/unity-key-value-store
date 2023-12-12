@@ -77,7 +77,7 @@ namespace Gilzoide.KeyValueStore
         private delegate void SqlErrorDelegate(IntPtr errorUtf8);
         unsafe private delegate int SqlRowDelegate(IntPtr kvs, int columnCount, IntPtr* values, IntPtr* columnNames);
 
-        private static List<string> _sqlReturn = new List<string>();
+        private readonly static List<string> _sqlReturn = new List<string>();
         private static string _sqlError;
 
         [MonoPInvokeCallback(typeof(SqlErrorDelegate))]
@@ -350,11 +350,12 @@ namespace Gilzoide.KeyValueStore
 
         private void RunSql(string sql, SqlRowDelegate sqlRowDelegate = null)
         {
-            _sqlError = null;
             SqliteKVS_run_sql(this, sql, SqlErrorCallback, sqlRowDelegate);
             if (_sqlError != null)
             {
-                throw new InvalidOperationException(_sqlError);
+                string error = _sqlError;
+                _sqlError = null;
+                throw new InvalidOperationException(error);
             }
         }
     }
