@@ -283,7 +283,7 @@ namespace Gilzoide.KeyValueStore
             SqliteKVS_close(this);
         }
 
-        unsafe public void Pragma(string pragma, List<string> out_values = null)
+        public void Pragma(string pragma, List<string> out_values = null)
         {
             Debug.Assert(!pragma.Contains(";"), "Pragma strings must not contain ';'");
             if (!pragma.TrimStart().StartsWith("pragma ", true, CultureInfo.InvariantCulture))
@@ -292,7 +292,10 @@ namespace Gilzoide.KeyValueStore
             }
             if (out_values != null)
             {
-                RunSql(pragma, SqlRowCallback);
+                unsafe
+                {
+                    RunSql(pragma, SqlRowCallback);
+                }
                 out_values.AddRange(_sqlReturn);
                 _sqlReturn.Clear();
             }
