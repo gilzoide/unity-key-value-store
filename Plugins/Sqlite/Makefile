@@ -79,3 +79,8 @@ android-x86_64: build/android/x86_64/libsqlitekvs.so
 android-x86: build/android/x86/libsqlitekvs.so
 
 webgl: build/webgl/libsqlitekvs.bc
+
+all-apple: macos-universal ios-universal tvos-universal
+all-android: android-arm64 android-arm32 android-x86_64 android-x86
+all-windows: windows-x86_64 windows-x86
+all-windows-mingw: windows-mingw-x86_64 windows-mingw-x86
