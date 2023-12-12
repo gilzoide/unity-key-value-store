@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using AOT;
 
 namespace Gilzoide.KeyValueStore
 {
@@ -62,6 +63,23 @@ namespace Gilzoide.KeyValueStore
 
         [DllImport(SqliteKvsDll)]
         private static extern void SqliteKVS_reset_select(SqliteKeyValueStore kvs);
+
+        [DllImport(SqliteKvsDll, CharSet = CharSet.Ansi)]
+        private static extern int SqliteKVS_run_sql([In, Out] SqliteKeyValueStore kvs, string sql, SqlErrorDelegate errorCallback);
+
+        #endregion
+
+        #region Native callbacks
+
+        private delegate void SqlErrorDelegate(IntPtr errorUtf8);
+
+        private static string _sqlError;
+
+        [MonoPInvokeCallback(typeof(SqlErrorDelegate))]
+        private static void SqlErrorCallback(IntPtr errorUtf8)
+        {
+            _sqlError = Marshal.PtrToStringUTF8(errorUtf8);
+        }
 
         #endregion
 
@@ -247,6 +265,12 @@ namespace Gilzoide.KeyValueStore
             SqliteKVS_close(this);
         }
 
+        public void Vacuum()
+        {
+            Commit();
+            RunSql("VACUUM");
+        }
+
         private void EnsureTransaction()
         {
             if (!_isInTransaction)
@@ -281,6 +305,16 @@ namespace Gilzoide.KeyValueStore
             finally
             {
                 _isPendingCommit = false;
+            }
+        }
+
+        private void RunSql(string sql)
+        {
+            _sqlError = null;
+            SqliteKVS_run_sql(this, sql, SqlErrorCallback);
+            if (_sqlError != null)
+            {
+                throw new InvalidOperationException(_sqlError);
             }
         }
     }
