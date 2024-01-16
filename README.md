@@ -1,4 +1,6 @@
 # Key-Value Store for Unity
+[![openupm](https://img.shields.io/npm/v/com.gilzoide.key-value-store?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.gilzoide.key-value-store/)
+
 Simple to use Key-Value Store interface and implementations for Unity, suitable for save systems.
 
 Key-Value Stores provide a simple and effective way of persisting arbitrary data mapped to string keys.
@@ -40,6 +42,19 @@ Object serializers:
   Unity 2018.1+ only.
 - [UnityMathTextSerializer](Runtime/ObjectSerializers/UnityMathTextSerializer.cs): serializes Unity math structs, like `Vector2` and `Matrix4x4`, to text as a list of numbers separated by commas.
   Unity 2018.1+ only.
+
+
+## How to install
+Either:
+- Use the [openupm registry](https://openupm.com/) and install this package using the [openupm-cli](https://github.com/openupm/openupm-cli):
+  ```
+  openupm add com.gilzoide.key-value-store
+  ```
+- Install using the [Unity Package Manager](https://docs.unity3d.com/Manual/upm-ui-giturl.html) with the following URL:
+  ```
+  https://github.com/gilzoide/unity-key-value-store.git#1.0.0-preview1
+  ```
+- Clone this repository or download a snapshot of it directly inside your project's `Assets` or `Packages` folder.
 
 
 ## Basic usage
