@@ -32,6 +32,7 @@ Key-Value Stores:
   Supports compression using [GZip](https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.gzipstream?view=netstandard-2.1).
 - [PlayerPrefsKeyValueStore](Runtime/PlayerPrefsKeyValueStore.cs): stores data in Unity's [PlayerPrefs](https://docs.unity3d.com/ScriptReference/PlayerPrefs.html) class
 - (external) [SqliteKeyValueStore](https://github.com/gilzoide/unity-key-value-store-sqlite): stores data using the [SQLite](https://sqlite.org) database engine.
+- (external) [GenericPasswordKeychainItemKeyValueStore](https://github.com/gilzoide/unity-key-value-store-apple-keychain): stores data into a Generic Password Keychain Item in Apple platforms (macOS, iOS, tvOS, visionOS).
 
 Object serializers:
 - [JsonUtilityTextSerializer](Runtime/ObjectSerializers/JsonUtilityTextSerializer.cs): the default serializer, uses Unity's [JsonUtility](https://docs.unity3d.com/ScriptReference/JsonUtility.html)
