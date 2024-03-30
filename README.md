@@ -33,6 +33,7 @@ Key-Value Stores:
 - [PlayerPrefsKeyValueStore](Runtime/PlayerPrefsKeyValueStore.cs): stores data in Unity's [PlayerPrefs](https://docs.unity3d.com/ScriptReference/PlayerPrefs.html) class
 - (external) [SqliteKeyValueStore](https://github.com/gilzoide/unity-key-value-store-sqlite): stores data using the [SQLite](https://sqlite.org) database engine.
 - (external) [GenericPasswordKeychainItemKeyValueStore](https://github.com/gilzoide/unity-key-value-store-apple-keychain): stores data into a Generic Password Keychain Item in Apple platforms (macOS, iOS, tvOS, visionOS).
+- (external) [ICloudKeyValueStore](https://github.com/gilzoide/unity-key-value-store-icloud-kvs): stores data using iCloud Key-Value Store in Apple platforms (macOS, iOS, tvOS, visionOS).
 
 Object serializers:
 - [JsonUtilityTextSerializer](Runtime/ObjectSerializers/JsonUtilityTextSerializer.cs): the default serializer, uses Unity's [JsonUtility](https://docs.unity3d.com/ScriptReference/JsonUtility.html)
