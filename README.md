@@ -144,8 +144,8 @@ if (kvs.TryGetObject("lastPosition", out Vector3 lastPosition))
 
 // 2. (optional) Use custom serializers
 var newtonsoftJsonSerializer = new NewtonsoftJsonSerializer();
-kvs.SetObject(newtonsoftJsonSerializer, "jsonList", new List<int> { 1, 3, 5, 9 });
-List<int> anotherJsonList = kvs.GetObject<List<int>>(newtonsoftJsonSerializer, "someKey");
+kvs.SetObject("jsonList", new List<int> { 1, 3, 5, 9 }, newtonsoftJsonSerializer);
+List<int> anotherJsonList = kvs.GetObject<List<int>>("someKey", newtonsoftJsonSerializer);
 
 
 // 3. (optional) Add serializers to the default serializer map
@@ -169,8 +169,8 @@ var serializerMap = new ObjectSerializerMap
     },
 };
 
-kvs.SetObject(serializerMap, "uses UnityMathTextSerializer", new Vector2(10, 5));
-kvs.SetObject(serializerMap, "uses NewtonsoftJsonSerializer", new int[] { 1, 2, 3 });
+kvs.SetObject("uses UnityMathTextSerializer", new Vector2(10, 5), serializerMap);
+kvs.SetObject("uses NewtonsoftJsonSerializer", new int[] { 1, 2, 3 }, serializerMap);
 
 // (tip) to avoid the annoyance of adding all math types manually, call this:
 unityMathTextSerializer.RegisterInSerializerMap(serializerMap);
