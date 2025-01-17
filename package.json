@@ -1,7 +1,7 @@
 {
   "name": "com.gilzoide.key-value-store",
   "displayName": "Key-Value Store",
-  "version": "1.0.0-preview1",
+  "version": "1.0.0-preview2",
   "description": "Key-Value Store save system interface and implementations",
   "homepage": "https://github.com/gilzoide/unity-key-value-store",
   "license": "Unlicense",
