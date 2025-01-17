@@ -30,7 +30,8 @@ Key-Value Stores:
 - [DictionaryKeyValueStore](Runtime/DictionaryKeyValueStore.cs): stores data in a `Dictionary<string, object>`.
   May be persisted in disk if [Json.NET](https://www.newtonsoft.com/json) is installed in the project, for example via the [Newtonsoft Json Unity Package](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@latest).
   Supports compression using [GZip](https://learn.microsoft.com/en-us/dotnet/api/system.io.compression.gzipstream?view=netstandard-2.1) and encryption/decryption using [SymmetricAlgorithm](https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.symmetricalgorithm).
-- [PlayerPrefsKeyValueStore](Runtime/PlayerPrefsKeyValueStore.cs): stores data in Unity's [PlayerPrefs](https://docs.unity3d.com/ScriptReference/PlayerPrefs.html) class
+- [PlayerPrefsKeyValueStore](Runtime/PlayerPrefsKeyValueStore.cs): stores data using Unity's [PlayerPrefs](https://docs.unity3d.com/ScriptReference/PlayerPrefs.html) class
+- [EditorPrefsKeyValueStore](Editor/EditorPrefsKeyValueStore.cs): stores data using Unity's [EditorPrefs](https://docs.unity3d.com/ScriptReference/EditorPrefs.html) class (editor only)
 - (external) [SqliteKeyValueStore](https://github.com/gilzoide/unity-key-value-store-sqlite): stores data using the [SQLite](https://sqlite.org) database engine.
 - (external) [GenericPasswordKeychainItemKeyValueStore](https://github.com/gilzoide/unity-key-value-store-apple-keychain): stores data into a Generic Password Keychain Item in Apple platforms (macOS, iOS, tvOS, visionOS).
 - (external) [ICloudKeyValueStore](https://github.com/gilzoide/unity-key-value-store-icloud-kvs): stores data using iCloud Key-Value Store in Apple platforms (macOS, iOS, tvOS, visionOS).

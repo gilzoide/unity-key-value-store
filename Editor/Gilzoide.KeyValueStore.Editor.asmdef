@@ -1,0 +1,18 @@
+{
+    "name": "Gilzoide.KeyValueStore.Editor",
+    "rootNamespace": "Gilzoide.KeyValueStore.Editor",
+    "references": [
+        "Gilzoide.KeyValueStore"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
