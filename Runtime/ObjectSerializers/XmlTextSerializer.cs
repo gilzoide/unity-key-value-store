@@ -7,7 +7,8 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
 {
     public class XmlTextSerializer : ITextSerializer
     {
-        private readonly static Dictionary<Type, XmlSerializer> _xmlSerializerCache = new Dictionary<Type, XmlSerializer>();
+        private readonly static Dictionary<Type, XmlSerializer> _xmlSerializerCache = new();
+
         public XmlSerializer GetCachedXmlSerializer(Type type)
         {
             if (!_xmlSerializerCache.TryGetValue(type, out XmlSerializer xmlSerializer))

@@ -1,4 +1,3 @@
-#if UNITY_2018_1_OR_NEWER
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
@@ -36,4 +35,3 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
         }
     }
 }
-#endif

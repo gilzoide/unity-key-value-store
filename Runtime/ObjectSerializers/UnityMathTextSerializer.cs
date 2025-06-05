@@ -1,4 +1,3 @@
-#if UNITY_2018_1_OR_NEWER
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -167,7 +166,7 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
             int intCount = UnsafeUtility.SizeOf<T>() / UnsafeUtility.SizeOf<int>();
             void* ptr = UnsafeUtility.AddressOf(ref value);
 
-            var stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new();
             stringBuilder.Append(UnsafeUtility.ReadArrayElement<int>(ptr, 0).ToString(CultureInfo.InvariantCulture));
             for (int i = 1; i < intCount; i++)
             {
@@ -184,7 +183,7 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
             void* ptr = UnsafeUtility.AddressOf(ref value);
             int intCount = UnsafeUtility.SizeOf<T>() / UnsafeUtility.SizeOf<int>();
 
-            using (IEnumerator<int> enumerator = text.EnumerateInts(NumberSeparator).GetEnumerator())
+            using IEnumerator<int> enumerator = text.EnumerateInts(NumberSeparator).GetEnumerator();
             for (int i = 0; i < intCount; i++)
             {
                 if (!enumerator.MoveNext())
@@ -218,7 +217,7 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
             void* ptr = UnsafeUtility.AddressOf(ref value);
             int floatCount = UnsafeUtility.SizeOf<T>() / UnsafeUtility.SizeOf<float>();
 
-            using (IEnumerator<float> enumerator = text.EnumerateFloats(NumberSeparator).GetEnumerator())
+            using IEnumerator<float> enumerator = text.EnumerateFloats(NumberSeparator).GetEnumerator();
             for (int i = 0; i < floatCount; i++)
             {
                 if (!enumerator.MoveNext())
@@ -233,4 +232,3 @@ namespace Gilzoide.KeyValueStore.ObjectSerializers
         #endregion
     }
 }
-#endif

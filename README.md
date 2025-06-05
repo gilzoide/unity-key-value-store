@@ -42,9 +42,7 @@ Object serializers:
 - [XmlTextSerializer](Runtime/ObjectSerializers/XmlTextSerializer.cs): uses C#'s [XmlSerializer](https://learn.microsoft.com/en-us/dotnet/api/system.xml.serialization.xmlserializer?view=netstandard-2.1)
 - [StructBinarySerializer](Runtime/ObjectSerializers/StructBinarySerializer.cs): serializes any unmanaged struct to binary using Unity's [UnsafeUtility](https://docs.unity3d.com/ScriptReference/Unity.Collections.LowLevel.Unsafe.UnsafeUtility.html).
   Does not support classes.
-  Unity 2018.1+ only.
 - [UnityMathTextSerializer](Runtime/ObjectSerializers/UnityMathTextSerializer.cs): serializes Unity math structs, like `Vector2` and `Matrix4x4`, to text as a list of numbers separated by commas.
-  Unity 2018.1+ only.
 
 
 ## How to install

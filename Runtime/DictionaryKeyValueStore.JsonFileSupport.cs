@@ -12,18 +12,14 @@ namespace Gilzoide.KeyValueStore
 
         public override void Load(Stream stream)
         {
-            using (var streamReader = new StreamReader(stream))
-            {
-                _dictionary = (Dictionary<string, object>) JsonSerializer.Deserialize(streamReader, typeof(Dictionary<string, object>));
-            }
+            using StreamReader streamReader = new(stream);
+            _dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(new JsonTextReader(streamReader));
         }
 
         public override void Save(Stream stream)
         {
-            using (var streamWriter = new StreamWriter(stream))
-            {
-                JsonSerializer.Serialize(streamWriter, _dictionary);
-            }
+            using StreamWriter streamWriter = new(stream);
+            JsonSerializer.Serialize(streamWriter, _dictionary);
         }
     }
 }
