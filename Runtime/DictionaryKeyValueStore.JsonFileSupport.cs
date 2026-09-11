@@ -13,7 +13,8 @@ namespace Gilzoide.KeyValueStore
         public override void Load(Stream stream)
         {
             using StreamReader streamReader = new(stream);
-            _dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(new JsonTextReader(streamReader));
+            // Json.NET yields null for an empty file, which would make every later Set/HasKey throw
+            _dictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(new JsonTextReader(streamReader)) ?? new();
         }
 
         public override void Save(Stream stream)
